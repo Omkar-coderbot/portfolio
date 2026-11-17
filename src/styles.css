@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    /* Technical Blueprint (Light Mode) */
+    --canvas: #FAF9F6;
+    --surface: #FFFFFF;
+    --border-subtle: #E2E8F0;
+    --border-hover: #CBD5E1;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --accent-primary: #1D4ED8;
+    --accent-highlight: #059669;
+  }
+
+  .dark {
+    /* Spatial Telemetry (Dark Mode Default) */
+    --canvas: #0B0F19;
+    --surface: #111827;
+    --border-subtle: #1E293B;
+    --border-hover: #334155;
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --accent-primary: #38BDF8;
+    --accent-highlight: #10B981;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: -0.012em;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Monospace is restricted strictly to telemetry metrics, technical spec tags, and code */
+  code, pre, .font-mono {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    letter-spacing: -0.025em;
+  }
+
+  /* Headings use Inter */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Inter", sans-serif;
+    letter-spacing: -0.028em;
+  }
+}
+
+/* Subtle elevation shadow */
+.shadow-telemetry {
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08), 0 0 0 1px #E2E8F0;
+}
+
+.dark .shadow-telemetry {
+  box-shadow: 0 4px 20px -2px rgba(3, 7, 18, 0.7), 0 0 0 1px #1E293B;
+}
+
+.shadow-telemetry-hover {
+  box-shadow: 0 10px 30px -4px rgba(15, 23, 42, 0.12), 0 0 0 1px #CBD5E1;
+}
+
+.dark .shadow-telemetry-hover {
+  box-shadow: 0 10px 30px -4px rgba(3, 7, 18, 0.85), 0 0 0 1px #334155;
+}
+
+/* Minimal scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #1E293B;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}

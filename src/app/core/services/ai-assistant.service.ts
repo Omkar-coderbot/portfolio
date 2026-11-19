@@ -1,19 +1,27 @@
-import { Injectable, signal, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, signal } from '@angular/core';
 import { ChatMessage } from '../models/portfolio.model';
-import { AI_SUGGESTED_PROMPTS } from '../data/portfolio-data';
+import { AI_SUGGESTED_PROMPTS, PROFILE_DATA } from '../data/portfolio-data';
+
+export interface ChatApiResponse {
+  response?: string;
+  error?: string;
+  rateLimited?: boolean;
+  serviceUnavailable?: boolean;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class AiAssistantService {
-  private http = inject(HttpClient);
-
-  // Cloudflare Worker / Pages function endpoint (relative path works with Pages Functions)
+  // Cloudflare Pages Function endpoint
   private readonly apiUrl = '/api/chat';
 
+  // Angular Signals for state management
   readonly isOpen = signal<boolean>(false);
   readonly isLoading = signal<boolean>(false);
+  readonly errorMessage = signal<string | null>(null);
+  readonly isRateLimited = signal<boolean>(false);
+  readonly isServiceUnavailable = signal<boolean>(false);
   readonly suggestedPrompts = signal<string[]>(AI_SUGGESTED_PROMPTS);
 
   readonly messages = signal<ChatMessage[]>([
@@ -21,7 +29,7 @@ export class AiAssistantService {
       id: 'welcome',
       role: 'assistant',
       content:
-        "Hello! I am Omkar's Portfolio AI Assistant, running directly on Cloudflare Workers AI with Llama 3.2. Ask me anything about Omkar's 2M+ parcel TPL Dataflow pipeline, PostGIS GiST query tuning, custom Koop.js architecture, or his backend engineering experience.",
+        "Hello! I am Omkar's Portfolio AI Assistant, running directly on Cloudflare Workers AI with Llama 3.1 8B. Ask me about Omkar's 2M+ parcel TPL Dataflow pipeline, PostGIS GiST spatial indexing, the 2D/3D Spatial Massing tool, or his engineering experience at Neilsoft Ltd.",
       timestamp: new Date(),
     },
   ]);
@@ -34,9 +42,23 @@ export class AiAssistantService {
     this.isOpen.set(open);
   }
 
-  async sendMessage(content: string): Promise<void> {
+  clearError(): void {
+    this.errorMessage.set(null);
+    this.isRateLimited.set(false);
+    this.isServiceUnavailable.set(false);
+  }
+
+  async sendQuestion(content: string): Promise<void> {
     const trimmed = content.trim();
     if (!trimmed || this.isLoading()) return;
+
+    // Client-side guard for 300 character limit
+    if (trimmed.length > 300) {
+      this.errorMessage.set(`Message exceeds the 300-character limit (${trimmed.length}/300 chars).`);
+      return;
+    }
+
+    this.clearError();
 
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
@@ -49,45 +71,88 @@ export class AiAssistantService {
     this.messages.update((msgs) => [...msgs, userMessage]);
     this.isLoading.set(true);
 
-    // Build context history for the model
-    const history = this.messages()
-      .filter((m) => m.role !== 'system')
-      .slice(-4)
-      .map((m) => ({ role: m.role, content: m.content }));
-
     try {
-      const response = await fetch(this.apiUrl, {
+      // Stateless request: only send the single user question to minimize tokens
+      const res = await fetch(this.apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: trimmed, history }),
+        body: JSON.stringify({ message: trimmed }),
       });
 
-      if (!response.ok) {
-        throw new Error(`Worker returned HTTP ${response.status}`);
+      const data: ChatApiResponse = await res.json().catch(() => ({}));
+
+      if (res.status === 429) {
+        // Rate limited (5 requests per minute)
+        this.isRateLimited.set(true);
+        const rateLimitNotice =
+          data.error ||
+          'Rate limit reached (5 questions/min). Please wait 60 seconds or reach out to Omkar directly at omkar.marwadi11@gmail.com.';
+        this.errorMessage.set(rateLimitNotice);
+
+        this.messages.update((msgs) => [
+          ...msgs,
+          {
+            id: `error-${Date.now()}`,
+            role: 'assistant',
+            content: rateLimitNotice,
+            timestamp: new Date(),
+            status: 'error',
+          },
+        ]);
+        return;
       }
 
-      const data = await response.json();
-      const replyText = data.response || 'No response returned from the AI model.';
+      if (res.status === 503) {
+        // Daily free 10k Neuron quota reached or Workers AI unavailable
+        this.isServiceUnavailable.set(true);
+        const quotaNotice =
+          data.error ||
+          'The AI assistant quota has been reached for today. Please contact Omkar Marwadi directly at omkar.marwadi11@gmail.com or on LinkedIn.';
+        this.errorMessage.set(quotaNotice);
+
+        this.messages.update((msgs) => [
+          ...msgs,
+          {
+            id: `error-${Date.now()}`,
+            role: 'assistant',
+            content: quotaNotice,
+            timestamp: new Date(),
+            status: 'error',
+          },
+        ]);
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error(data.error || `HTTP ${res.status}`);
+      }
+
+      const replyText =
+        data.response ||
+        'I am ready to answer any questions about Omkar\'s technical stack and case studies.';
 
       const assistantMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
         content: replyText,
         timestamp: new Date(),
+        status: 'complete',
       };
 
       this.messages.update((msgs) => [...msgs, assistantMessage]);
-    } catch (err) {
-      console.warn('API chat endpoint unavailable, falling back to local deterministic response:', err);
-      // Seamless graceful fallback
+    } catch (err: any) {
+      console.warn('API chat fetch failed, providing verified local response:', err);
       const fallbackReply = this.getLocalFallback(trimmed);
-      const assistantMessage: ChatMessage = {
-        id: `assistant-${Date.now()}`,
-        role: 'assistant',
-        content: fallbackReply,
-        timestamp: new Date(),
-      };
-      this.messages.update((msgs) => [...msgs, assistantMessage]);
+      this.messages.update((msgs) => [
+        ...msgs,
+        {
+          id: `assistant-${Date.now()}`,
+          role: 'assistant',
+          content: fallbackReply,
+          timestamp: new Date(),
+          status: 'complete',
+        },
+      ]);
     } finally {
       this.isLoading.set(false);
     }
@@ -95,18 +160,52 @@ export class AiAssistantService {
 
   private getLocalFallback(query: string): string {
     const q = query.toLowerCase();
-    if (q.includes('2m') || q.includes('parcel') || q.includes('tpl') || q.includes('dataflow')) {
-      return "Omkar re-architected the 2M+ LA County parcel sync pipeline using .NET 8 TPL Dataflow. The legacy system took ~1 week with frequent memory bloat. By creating bounded BufferBlocks (capacity 500), immutable per-parcel records, and matching MaxDegreeOfParallelism to the PostgreSQL connection pool with chunked COPY operations, he reduced execution time to 3.8 hours with a flat 1.2 GB RAM ceiling.";
+    if (
+      q.includes('2m') ||
+      q.includes('parcel') ||
+      q.includes('tpl') ||
+      q.includes('dataflow') ||
+      q.includes('13x')
+    ) {
+      return 'For the Geospatial Real Estate & Parcel Platform, Omkar architected an in-process bounded pipeline using .NET 8 TPL Dataflow. It evaluated 2M+ LA County parcels with automated financial reporting and OpenAI-assisted summaries. By pairing bounded BufferBlocks, concurrent TransformBlocks, and chunked PostgreSQL COPY ActionBlocks, the team achieved 13x faster ingestion and reduced parcel selection latency from hours to under 2 minutes.';
     }
-    if (q.includes('koop') || q.includes('arcgis') || q.includes('spatial') || q.includes('gist') || q.includes('postgis')) {
-      return "To eliminate third-party ArcGIS FeatureServer rate limits and per-query fees, Omkar built an automated ETL pipeline on Azure Container Apps Jobs with Azure Blob Storage staging and Azure Key Vault secrets. Data is loaded into PostgreSQL/PostGIS with GiST spatial indexing and served via a custom Node.js/Koop.js server, delivering sub-120ms spatial queries and 99.99% availability.";
+    if (
+      q.includes('massing') ||
+      q.includes('layout') ||
+      q.includes('cesium') ||
+      q.includes('konva') ||
+      q.includes('floor-plan') ||
+      q.includes('floor plan')
+    ) {
+      return 'The Spatial Massing & Floor-Plan Layout Tool is a browser-based 2D and 3D application that reduced initial layout preparation from ~2 months to ~15 minutes. It combines Konva.js for interactive 2D setback sketching on HTML5 canvas and Cesium.js for volumetric 3D massing extrusions at 60 FPS, with parcel boundaries streamed via the ArcGIS JS API.';
     }
-    if (q.includes('polly') || q.includes('resilience') || q.includes('retry')) {
-      return "Omkar uses Polly in .NET 8 for defense-in-depth against transient failures. He implements exponential backoff with decorrelated jitter for database lockups and third-party HTTP timeouts, combined with circuit breakers to prevent cascading downstream failures.";
+    if (
+      q.includes('etl') ||
+      q.includes('koop') ||
+      q.includes('postgis') ||
+      q.includes('gist') ||
+      q.includes('polly') ||
+      q.includes('serverless')
+    ) {
+      return 'Omkar designed a serverless GIS ETL pipeline on Azure using Azure Container Apps Jobs with .NET 8 and Polly retries. It ingests external ArcGIS APIs into PostgreSQL/PostGIS with GiST spatial indexing, served via a custom Node.js and Koop.js FeatureServer that delivers sub-second (<120ms) spatial lookups with 99.99% availability.';
     }
-    if (q.includes('contact') || q.includes('hire') || q.includes('email')) {
-      return "You can reach Omkar directly at omkar.marwadi11@gmail.com or by phone at +91 9075914867. He is based in Pune, India.";
+    if (
+      q.includes('how i work') ||
+      q.includes('mentoring') ||
+      q.includes('poc') ||
+      q.includes('performance')
+    ) {
+      return 'Omkar operates across three core pillars: (1) Client Technical Point of Contact (direct requirement discussions, pragmatic trade-offs, steady delivery), (2) Mentoring (thorough code reviews, concurrency debugging, backend structure, and SQL optimization), and (3) Practical Performance (GiST spatial indexing, bounded parallel pipelines, and Polly resilience).';
     }
-    return "Omkar Marwadi is a Senior Software Engineer specializing in distributed systems, high-throughput backend data pipelines, and geospatial cloud platforms (.NET 8, PostGIS, Azure ACA, Koop.js, Angular). Feel free to ask about any of his production case studies!";
+    if (
+      q.includes('contact') ||
+      q.includes('email') ||
+      q.includes('phone') ||
+      q.includes('hire') ||
+      q.includes('resume')
+    ) {
+      return `You can contact Omkar Marwadi directly at ${PROFILE_DATA.email} or by phone at ${PROFILE_DATA.phone}. He is based in Pune, India. You can also download his resume directly via the 'Download Resume' action on this page.`;
+    }
+    return 'Omkar Marwadi is a Senior Software Engineer at Neilsoft Ltd. (Pune, India) with 3+ years of full-stack and geospatial software engineering experience across C#, .NET 8, ASP.NET Core, Angular 17, PostGIS, Azure Container Apps, and browser 2D/3D geometry tools. Feel free to ask about any of his production case studies or architecture patterns!';
   }
 }

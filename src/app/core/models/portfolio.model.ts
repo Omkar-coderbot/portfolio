@@ -1,14 +1,45 @@
+export interface MetricItem {
+  label: string;
+  value: string;
+  detail: string;
+}
+
+export interface StructuredColumn {
+  title: string;
+  badge?: string;
+  items: {
+    label: string;
+    value: string;
+    detail?: string;
+  }[];
+}
+
+export interface ProjectMediaView {
+  id: string;
+  label: string;
+  assetUrl: string;
+  caption: string;
+  alt: string;
+  description?: string;
+}
+
+export interface ProjectMediaSlot {
+  type: 'single' | 'switcher';
+  defaultViewId?: string;
+  views: ProjectMediaView[];
+}
+
 export interface CaseStudy {
   id: string;
   title: string;
   subtitle: string;
+  description: string;
   scaleBadge: string;
   tags: string[];
-  metrics: {
-    label: string;
-    value: string;
-    detail: string;
-  }[];
+  metrics: MetricItem[];
+  mediaSlot: ProjectMediaSlot;
+  columnLeft: StructuredColumn;
+  columnRight: StructuredColumn;
   problem: string;
   hardDecision: string;
   whatBrokeFirstAndFix: {
@@ -17,7 +48,15 @@ export interface CaseStudy {
     outcome: string;
   };
   architectureHighlights: string[];
-  diagramType: 'tpl-dataflow' | 'koop-spatial' | 'ai-massing';
+}
+
+export interface HowIWorkPillar {
+  id: string;
+  title: string;
+  tagline: string;
+  summary: string;
+  keyPractices: string[];
+  icon: 'poc' | 'mentor' | 'performance';
 }
 
 export interface TechSkill {
@@ -52,6 +91,27 @@ export interface EducationItem {
   period: string;
   cgpa: string;
   highlights: string[];
+}
+
+export interface ProfileData {
+  name: string;
+  title: string; // Strictly "Senior Software Engineer"
+  company: string;
+  location: string;
+  tenure: string;
+  totalExperience: string;
+  summary: string;
+  email: string;
+  phone: string;
+  resumeUrl: string;
+  github: string;
+  linkedin: string;
+  coreStack: string[];
+  telemetryHighlights: {
+    value: string;
+    label: string;
+    subtext: string;
+  }[];
 }
 
 export interface ChatMessage {

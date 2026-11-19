@@ -1,14 +1,17 @@
-<div class="min-h-screen bg-[#FAF9F6] text-[#475569] dark:bg-[#0B0F19] dark:text-[#94A3B8] font-sans selection:bg-blue-600 selection:text-white dark:selection:bg-sky-500 dark:selection:text-slate-950 antialiased transition-colors duration-200">
-  <!-- Sticky Nav Header with Download Resume CTA & Sun/Moon Toggle -->
+<div class="min-h-screen font-sans selection:bg-blue-600 selection:text-white dark:selection:bg-sky-500 dark:selection:text-slate-950 antialiased transition-colors duration-200">
+  <!-- Sticky Nav Header with Frosted Alabaster / Obsidian Surface & Hover Identity Reveal -->
   <app-nav-header />
 
   <!-- Main Portfolio Content -->
   <main>
-    <!-- Hero Section with Dual-Theme Topographic Contour & Telemetry Bar -->
+    <!-- Hero Section with Profile Hover Links & Solid Stat Blocks (No background grids, graphs or contour lines) -->
     <app-hero />
 
-    <!-- Architecture Case Studies Section with Fixed Unclipped Diagrams -->
+    <!-- Split Project / Case-Study Cards with Dedicated Real Image & Media Slots (3D Cesium & 2D Konva Switcher) -->
     <app-case-studies />
+
+    <!-- How I Work (Clean 3-Column Section: Client Technical POC, Mentoring, Practical Performance) -->
+    <app-how-i-work />
 
     <!-- Technical Stack Matrix (Categorized 4-Pillar Architecture) -->
     <app-tech-stack />
@@ -20,14 +23,14 @@
   <!-- Engineering Footer -->
   <app-footer />
 
-  <!-- Floating / Embedded Cloudflare Worker AI Assistant -->
+  <!-- Embedded Knowledge Assistant -->
   <app-ai-assistant />
 
-  <!-- Executive Dual-Theme Toast Notification -->
+  <!-- Clean Toast Notification -->
   @if (toastService.currentToast(); as toast) {
-    <div class="fixed top-20 right-4 sm:right-6 z-50 animate-in fade-in slide-in-from-top-3 duration-200 pointer-events-auto">
+    <div class="fixed top-20 right-4 sm:right-6 z-50 animate-in fade-in slide-in-from-top-3 duration-150 pointer-events-auto">
       <div
-        class="flex items-center gap-3 px-4 py-3 rounded-xl border border-[#E2E8F0] dark:border-[#1E293B] bg-white dark:bg-[#111827] shadow-xl backdrop-blur-md text-xs font-medium"
+        class="flex items-center gap-3 px-4 py-3 rounded-xs border border-[#E8E5DF] dark:border-[#1C2436] bg-white dark:bg-[#0E1320] shadow-xl text-xs font-mono"
         [class.text-emerald-800]="toast.type === 'success'"
         [class.dark:text-emerald-300]="toast.type === 'success'"
         [class.text-blue-800]="toast.type === 'info'"
@@ -43,12 +46,12 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         }
-        <span class="text-[#0F172A] dark:text-[#F8FAFC]">{{ toast.message }}</span>
+        <span class="text-stone-900 dark:text-white font-medium">{{ toast.message }}</span>
         <button
           type="button"
           (click)="toastService.dismiss()"
           aria-label="Dismiss notification"
-          class="ml-2 text-slate-400 hover:text-slate-700 dark:text-[#64748B] dark:hover:text-[#F8FAFC] cursor-pointer">
+          class="ml-2 text-stone-400 hover:text-stone-700 dark:text-slate-500 dark:hover:text-white cursor-pointer">
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>

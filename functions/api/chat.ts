@@ -1,156 +1,348 @@
 /**
- * Cloudflare Pages Function for /api/chat
- * Free Cloudflare Workers AI integration (@cf/meta/llama-3.2-3b-instruct)
+ * Cloudflare Pages Function: /api/chat
+ * Free, rate-limited AI Q&A endpoint powered by Cloudflare Workers AI (@cf/meta/llama-3.1-8b-instruct)
+ *
+ * Setup in Cloudflare Pages:
+ * 1. Go to Cloudflare Dashboard -> Workers & Pages -> Select your project -> Settings -> Functions
+ * 2. Under "Workers AI bindings", add a binding:
+ *    - Variable name: AI
+ * 3. Deploy or redeploy your Pages project.
  */
 
 interface Env {
-  AI?: any;
+  AI?: {
+    run: (
+      model: string,
+      inputs: {
+        messages: Array<{ role: string; content: string }>;
+        max_tokens?: number;
+        temperature?: number;
+      }
+    ) => Promise<{ response?: string }>;
+  };
 }
 
-const SYSTEM_PROMPT = `You are "Omkar's Portfolio AI", an authoritative, precise, and concise technical representative for Omkar Marwadi.
-Your goal is to answer questions from hiring managers, engineering leaders, and recruiters about Omkar's system architecture, technical stack, production experience, and problem-solving methodology.
+const SYSTEM_PROMPT = `You are the official Portfolio AI Assistant for Omkar Marwadi.
+Your role is to answer questions from engineering leaders, hiring managers, and recruiters accurately, factually, and concisely about Omkar's production engineering experience, architecture, and technology stack.
 
-### PROFILE & PERSONA
+### CANDIDATE PROFILE (GROUND TRUTH)
 - Name: Omkar Marwadi
-- Current Role: Senior Software Engineer | Full-Stack, Distributed Systems & Geospatial Cloud Architect
-- Location: Pune, India
-- Email: omkar.marwadi11@gmail.com | Phone: +91 9075914867
-- Education: B.Tech (CGPA: 8.68), Sanjeevan Engineering and Technology Institute (DBATU University), 2019–2023
-- Tone: Crisp, engineering-driven, grounded, respectful, zero fluff.
+- Current Role: Senior Software Engineer at Neilsoft Ltd. (Pune, India) — Jul 2026 to Present
+- Total Experience: 3+ years of full-stack and geospatial software engineering experience
+- Past Tenure at Neilsoft Ltd.:
+  - Junior Software Engineer (Dec 2024 – Jun 2026)
+  - Graduate Engineer Trainee (Dec 2023 – Dec 2024)
+- Education: Bachelor of Technology (B.Tech) in Computer Science & Engineering (CGPA: 8.68/10.0), Sanjeevan Engineering and Technology Institute / DBATU (2019–2023)
+- Contacts: Email: omkar.marwadi11@gmail.com | LinkedIn: https://linkedin.com/in/omkarmarwadi
 
-### CORE PRODUCTION CASE STUDIES
-1. High-Volume Parcel Synchronization & Multi-Factor Scoring Engine (.NET 8 + TPL Dataflow)
-   - Scale: 2M+ LA County land parcels evaluated across 25+ spatial, zoning, and valuation rules.
-   - Bottleneck: Legacy sync was sequential and API-driven, taking ~7 days, with severe memory bloat.
-   - Hard Decision: Avoided external distributed brokers (Kafka/RabbitMQ) for single-node workloads to eliminate serialization overhead and cluster maintenance. Used .NET Task Parallel Library (TPL Dataflow) actor-style bounded pipeline.
-   - What Broke First: Unbounded Parallel.ForEachAsync exhausted 32GB RAM in 40 mins and flooded Postgres with 500+ sockets.
-   - The Fix: BoundedCapacity = 500 on BufferBlock, immutable per-parcel records, MaxDegreeOfParallelism matched to DB pool, chunked PostgreSQL COPY bulk upserts (1,000 records/tx), and Polly exponential jitter retry.
-   - Result: Cut runtime from ~1 week down to 3.8 hours with 1.2 GB flat RAM ceiling and zero data corruption.
+### CORE TECHNOLOGIES
+- Languages & Backends: C#, .NET 8, ASP.NET Core Web API, Node.js, TypeScript
+- Data Pipelines & Resilience: .NET TPL Dataflow (in-process bounded pipelines with backpressure), Polly (retry with decorrelated exponential jitter, circuit breakers)
+- Geospatial & Databases: PostgreSQL, PostGIS (GiST spatial indexing, ST_Intersects, ST_Contains), MS SQL Server (stored procedure & execution plan tuning), Koop.js (custom GeoServices REST server)
+- Cloud & Infrastructure: Azure Container Apps (ACA), Azure Container Apps Jobs (scheduled cron-triggered batch workers), Azure Blob Storage, Azure Key Vault, Docker, Git
+- Frontend & 3D/2D GIS: Angular 17 (standalone components, Signals, @for/@if control flow), ArcGIS SDK & JS API, Cesium.js (3D WebGL building massing), Konva.js (2D HTML5 canvas drafting), Tailwind CSS
+- Applied AI Tools: Claude, OpenAI API (structured municipal zoning bylaw parsing)
 
-2. External Parameter ETL & Custom ArcGIS Feature Service Platform (.NET 8 + PostGIS + Koop.js)
-   - Bottleneck: Commercial ArcGIS FeatureServers charged per-query costs, rate-limited batch runs, and caused 15s+ response times.
-   - Architecture: Scheduled .NET 8 ETL worker deployed on Azure Container Apps Jobs, checkpointed staging in Azure Blob Storage, Azure Key Vault for credentials, PostgreSQL/PostGIS (Azure Flexible Server), and custom Node.js/Koop.js server.
-   - What Broke First: Multi-polygon spatial intersects (ST_Intersects) pegged Postgres CPU at 100%.
-   - The Fix: GiST (Generalized Search Tree) spatial indexing, pre-simplified geometries (ST_SimplifyPreserveTopology), FIPS code partitioning, and Polly retry recovery.
-   - Result: Sub-second queries (<120ms), 99.99% availability, 85% monthly cost savings, zero vendor rate-limit throttling.
+### THREE PRODUCTION CASE STUDIES
+1. Geospatial Real Estate & Parcel Platform (.NET 8 Web API, TPL Dataflow, PostgreSQL, PostGIS, Angular 17, OpenAI API, SSO):
+   - Evaluated 2M+ Los Angeles County land parcels with 25+ zoning and valuation factors.
+   - Built a multi-threaded in-process TPL Dataflow sync engine with bounded capacity (500) and chunked COPY commits (1,000 records).
+   - Achieved 13x faster ingestion speed, cutting parcel selection latency from hours to under 2 minutes with a flat 1.2 GB RAM ceiling.
+   - Integrated Google/Microsoft SSO with RBAC and OpenAI API for automated municipal parcel summaries.
 
-3. Automated Spatial Massing & AI Site Intelligence (ArcGIS SDK + Cesium.js + Konva.js + OpenAI API)
-   - Scale: Real-time 2D/3D site feasibility and zoning envelope calculation in under 4 seconds at 60 FPS.
-   - Architecture: Konva.js (HTML5 Canvas) for 2D setback calculation, Cesium.js (WebGL) for 3D massing extrusion, Web Workers for polygon geometry buffering, and OpenAI API with strict JSON schema enforcement for municipal zoning parsing.
+2. Spatial Massing & Floor-Plan Layout Tool (Angular 17, ArcGIS JS API, Cesium.js, Konva.js, TypeScript):
+   - Browser-based 2D and 3D layout tool generating building massing envelopes and floor plans from parcel boundaries and municipal zoning rules.
+   - Reduced initial building layout preparation time from ~2 months to roughly 15 minutes.
+   - Uses Konva.js for interactive 2D setback buffering and Cesium.js for volumetric 3D massing extrusion at 60 FPS WebGL, offloading geometric sweep-line computations to Web Workers.
 
-### WORK HISTORY (DO NOT USE THE WORD "MICROSERVICES")
-- Sr. Software Engineer | Neilsoft Ltd., Pune (Jul 2026 – Present): Cloud-native backend architect, .NET 8, ACA Jobs, PostGIS, primary technical POC for enterprise clients, team mentor, Claude-assisted velocity.
-- Jr. Software Engineer | Neilsoft Ltd., Pune (Dec 2024 – Jun 2026): .NET TPL Dataflow pipelines, Koop.js Feature Servers, 2D/3D GIS tools, OAuth 2.0 / OIDC.
-- Graduate Engineer Trainee | Neilsoft Ltd., Pune (Dec 2023 – Dec 2024): .NET, SQL Server optimization, automated testing.
-- Software Developer Intern | Imagine Multiservices Pvt. Ltd. (2022 – 2023): REST APIs, web apps, relational DBs.
+3. Serverless GIS ETL & Spatial Feature Service (Azure Container Apps Jobs, .NET 8, Polly, PostGIS, Node.js, Koop.js, Azure Blob & Key Vault):
+   - Serverless pipeline on Azure ingesting external commercial ArcGIS REST APIs into PostGIS.
+   - Managed via scheduled Azure Container Apps Jobs with Polly retry policies (exponential jitter) to handle transient rate limits.
+   - Served through an in-house Node.js and Koop.js GeoServices provider with PostGIS GiST spatial indexing, delivering sub-second (<120ms) spatial query lookups with 99.99% availability and 85% monthly cost savings.
 
-### STRICT GUARDRAILS & ANTI-HALLUCINATION RULES
-1. NEVER invent employers, job titles, or metrics not listed above.
-2. DO NOT use the word "microservices" anywhere in your responses.
-3. If asked about unrelated topics, politely decline and steer the conversation back to Omkar's engineering experience.
-4. Keep answers focused, technical, and under 150-200 words.
-5. Provide Omkar's direct email (omkar.marwadi11@gmail.com) if the user expresses hiring interest.`;
+### HOW OMKAR WORKS
+- Client Technical Point of Contact: Direct involvement in client requirement discussions, clarifying scope and trade-offs, and supporting steady delivery.
+- Mentoring: Guiding junior engineers through code reviews, debugging support, backend structure, and database/query optimization.
+- Practical Performance: Focusing on reliable execution, spatial indexing, parallel/batch processing, and clean, maintainable code.
+
+### STRICT RULES & GUARDRAILS
+1. Tone: Crisp, engineering-focused, grounded, professional.
+2. NEVER describe any architecture as "microservices" (strictly forbidden).
+3. NEVER invent or hallucinate employers, metrics, or technologies not listed above.
+4. Keep all responses concise (under 150 words).
+5. For any inquiries outside Omkar's portfolio scope, or if the user asks about hiring or interviews, politely direct them to Omkar's email (omkar.marwadi11@gmail.com) or LinkedIn (https://linkedin.com/in/omkarmarwadi).`;
+
+// Allowed origins validator
+function isAllowedOrigin(request: Request): boolean {
+  const origin = request.headers.get('Origin') || '';
+  const referer = request.headers.get('Referer') || '';
+  const host = (request.headers.get('Host') || '').toLowerCase();
+
+  // If both Origin and Referer are absent (e.g. same-origin direct fetch in some browsers)
+  if (!origin && !referer) {
+    if (host.includes('localhost') || host.includes('127.0.0.1') || host.endsWith('.pages.dev')) {
+      return true;
+    }
+    return true;
+  }
+
+  const check = (urlStr: string): boolean => {
+    try {
+      const u = new URL(urlStr);
+      const h = u.hostname.toLowerCase();
+      if (h === 'localhost' || h === '127.0.0.1') return true;
+      if (h.endsWith('.pages.dev')) return true;
+      if (host && h === host.split(':')[0]) return true;
+      return false;
+    } catch {
+      return false;
+    }
+  };
+
+  if (origin && check(origin)) return true;
+  if (referer && check(referer)) return true;
+  return false;
+}
+
+// In-memory per-IP rate limiting using Cloudflare caches.default API
+// 5 requests per 60 seconds per CF-Connecting-IP
+async function enforceRateLimit(
+  request: Request
+): Promise<{ allowed: boolean; currentHits: number }> {
+  const clientIp = request.headers.get('CF-Connecting-IP') || '127.0.0.1';
+
+  try {
+    const cache = (caches as any).default;
+    if (!cache) {
+      return { allowed: true, currentHits: 1 };
+    }
+
+    const rateLimitUrl = new URL(
+      `https://ratelimit.internal/ip/${encodeURIComponent(clientIp)}`
+    );
+    const cacheKey = new Request(rateLimitUrl.toString());
+
+    let hits = 0;
+    const cachedResponse = await cache.match(cacheKey);
+    if (cachedResponse) {
+      try {
+        const data = await cachedResponse.json();
+        hits = Number(data?.count) || 0;
+      } catch {}
+    }
+
+    if (hits >= 5) {
+      return { allowed: false, currentHits: hits };
+    }
+
+    const newHits = hits + 1;
+    const newCacheResponse = new Response(JSON.stringify({ count: newHits }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=60',
+      },
+    });
+
+    await cache.put(cacheKey, newCacheResponse);
+    return { allowed: true, currentHits: newHits };
+  } catch {
+    // If cache API is not supported in the current environment (e.g. local preview), allow gracefully
+    return { allowed: true, currentHits: 1 };
+  }
+}
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Headers': 'Content-Type',
   'Content-Type': 'application/json',
 };
 
+// Handle CORS OPTIONS preflight
 export const onRequestOptions = async () => {
   return new Response(null, { headers: CORS_HEADERS, status: 204 });
 };
 
+// Handle POST /api/chat
 export const onRequestPost = async (context: { request: Request; env: Env }) => {
-  try {
-    const body = (await context.request.json()) as {
-      message?: string;
-      history?: Array<{ role: 'user' | 'assistant'; content: string }>;
-    };
+  const { request, env } = context;
 
-    const userMessage = (body.message || '').trim();
-    if (!userMessage) {
-      return new Response(
-        JSON.stringify({ error: 'Empty prompt provided.' }),
-        { status: 400, headers: CORS_HEADERS }
-      );
-    }
-
-    if (userMessage.length > 1000) {
-      return new Response(
-        JSON.stringify({ error: 'Message exceeds character limit (1000 chars).' }),
-        { status: 400, headers: CORS_HEADERS }
-      );
-    }
-
-    const messages: Array<{ role: string; content: string }> = [
-      { role: 'system', content: SYSTEM_PROMPT },
-    ];
-
-    if (Array.isArray(body.history)) {
-      const recentHistory = body.history.slice(-4);
-      for (const item of recentHistory) {
-        if (item.role && item.content) {
-          messages.push({
-            role: item.role === 'assistant' ? 'assistant' : 'user',
-            content: item.content.slice(0, 600),
-          });
-        }
-      }
-    }
-
-    messages.push({ role: 'user', content: userMessage });
-
-    let reply = '';
-    if (context.env.AI) {
-      const aiResponse = await context.env.AI.run('@cf/meta/llama-3.2-3b-instruct', {
-        messages,
-        max_tokens: 450,
-        temperature: 0.3,
-      });
-      reply = aiResponse?.response || 'I am ready to share details on Omkar\'s architecture and experience.';
-    } else {
-      reply = getFallbackAnswer(userMessage);
-    }
-
-    return new Response(JSON.stringify({ response: reply }), {
-      status: 200,
-      headers: CORS_HEADERS,
-    });
-  } catch (err: any) {
+  // 1. Validate Origin / Referer
+  if (!isAllowedOrigin(request)) {
     return new Response(
-      JSON.stringify({
-        error: 'An internal error occurred processing your request.',
-        details: err?.message || String(err),
-      }),
-      { status: 500, headers: CORS_HEADERS }
+      JSON.stringify({ error: 'Forbidden: Request origin is not permitted.' }),
+      { status: 403, headers: CORS_HEADERS }
     );
   }
+
+  // 2. Parse & Validate Input Safeguards (Stateless, Max 300 Characters)
+  let body: { message?: string } | null = null;
+  try {
+    body = await request.json();
+  } catch {
+    return new Response(
+      JSON.stringify({ error: 'Bad Request: Invalid JSON body.' }),
+      { status: 400, headers: CORS_HEADERS }
+    );
+  }
+
+  if (!body || typeof body.message !== 'string') {
+    return new Response(
+      JSON.stringify({ error: 'Bad Request: JSON object with { message: string } is required.' }),
+      { status: 400, headers: CORS_HEADERS }
+    );
+  }
+
+  const userMessage = body.message.trim();
+
+  // Reject empty message
+  if (userMessage.length === 0) {
+    return new Response(
+      JSON.stringify({ error: 'Bad Request: Message cannot be empty.' }),
+      { status: 400, headers: CORS_HEADERS }
+    );
+  }
+
+  // Reject message exceeding 300 characters
+  if (userMessage.length > 300) {
+    return new Response(
+      JSON.stringify({
+        error: `Bad Request: Message exceeds the 300-character limit (${userMessage.length}/300 chars).`,
+      }),
+      { status: 400, headers: CORS_HEADERS }
+    );
+  }
+
+  // 3. Per-IP Rate Limiting (5 requests per 60 seconds)
+  const rateLimit = await enforceRateLimit(request);
+  if (!rateLimit.allowed) {
+    return new Response(
+      JSON.stringify({
+        error:
+          'Rate limit reached: Maximum 5 questions per minute. Please wait 60 seconds, or contact Omkar Marwadi directly via email (omkar.marwadi11@gmail.com) or LinkedIn.',
+        rateLimited: true,
+      }),
+      {
+        status: 429,
+        headers: {
+          ...CORS_HEADERS,
+          'Retry-After': '60',
+        },
+      }
+    );
+  }
+
+  // 4. Call Cloudflare Workers AI with @cf/meta/llama-3.1-8b-instruct
+  // Stateless request: only system prompt + single user question
+  if (env && env.AI) {
+    try {
+      const aiResult = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: userMessage },
+        ],
+        max_tokens: 250,
+        temperature: 0.3,
+      });
+
+      const reply =
+        aiResult?.response?.trim() ||
+        "I am ready to share details on Omkar's experience, .NET 8 pipelines, or geospatial architecture.";
+
+      return new Response(JSON.stringify({ response: reply }), {
+        status: 200,
+        headers: CORS_HEADERS,
+      });
+    } catch (err: any) {
+      // 503 response if free 10,000 daily Neuron quota is reached or service fails
+      console.error('Workers AI invocation error:', err);
+      return new Response(
+        JSON.stringify({
+          error:
+            'The AI assistant quota has been reached for today or the service is temporarily unavailable. Please contact Omkar Marwadi directly via email at omkar.marwadi11@gmail.com or on LinkedIn at https://linkedin.com/in/omkarmarwadi.',
+          serviceUnavailable: true,
+        }),
+        {
+          status: 503,
+          headers: CORS_HEADERS,
+        }
+      );
+    }
+  }
+
+  // 5. Deterministic fallback when env.AI is not bound (e.g. local preview)
+  const fallbackReply = getLocalFallbackAnswer(userMessage);
+  return new Response(
+    JSON.stringify({
+      response: fallbackReply,
+      localDevNote: 'env.AI binding not detected; returning verified local response.',
+    }),
+    {
+      status: 200,
+      headers: CORS_HEADERS,
+    }
+  );
 };
 
-function getFallbackAnswer(query: string): string {
+// Grounded fallback answer when running without Cloudflare Workers AI binding
+function getLocalFallbackAnswer(query: string): string {
   const q = query.toLowerCase();
 
-  if (q.includes('2m') || q.includes('parcel') || q.includes('tpl') || q.includes('dataflow') || q.includes('pipeline')) {
-    return "Omkar re-architected the 2M+ LA County parcel sync pipeline using .NET 8 TPL Dataflow. The legacy system took ~1 week with frequent memory bloat and socket exhaustion. By creating bounded BufferBlocks (capacity 500), immutable per-parcel records, and matching MaxDegreeOfParallelism to the PostgreSQL connection pool with chunked COPY operations, he reduced execution time to 3.8 hours with a flat 1.2 GB RAM ceiling.";
+  if (
+    q.includes('2m') ||
+    q.includes('parcel') ||
+    q.includes('tpl') ||
+    q.includes('dataflow') ||
+    q.includes('speed') ||
+    q.includes('13x')
+  ) {
+    return 'For the Geospatial Real Estate Platform, Omkar architected a multi-threaded bounded pipeline using .NET 8 TPL Dataflow evaluating 2M+ LA County parcels. By pairing bounded BufferBlocks (capacity 500), concurrent TransformBlocks, and chunked bulk COPY ActionBlocks, the pipeline ran 13x faster and reduced parcel selection latency from hours to under 2 minutes with a flat 1.2 GB RAM ceiling.';
   }
 
-  if (q.includes('koop') || q.includes('arcgis') || q.includes('spatial') || q.includes('gist') || q.includes('postgis')) {
-    return "To eliminate third-party ArcGIS FeatureServer rate limits and per-query fees, Omkar built an automated ETL pipeline on Azure Container Apps Jobs with Azure Blob Storage staging and Azure Key Vault secrets. Data is loaded into PostgreSQL/PostGIS with GiST spatial indexing and served via a custom Node.js/Koop.js server, delivering sub-120ms spatial queries and 99.99% availability.";
+  if (
+    q.includes('massing') ||
+    q.includes('floor') ||
+    q.includes('layout') ||
+    q.includes('cesium') ||
+    q.includes('konva') ||
+    q.includes('3d') ||
+    q.includes('2d')
+  ) {
+    return 'The Spatial Massing & Floor-Plan Layout Tool is a browser-based 2D and 3D application that collapsed building layout preparation from roughly 2 months to ~15 minutes. It combines Konva.js for interactive 2D setback buffering and Cesium.js for volumetric 3D massing extrusions at 60 FPS WebGL, using Angular 17 Signals and Web Workers for polygon geometry buffering.';
   }
 
-  if (q.includes('polly') || q.includes('resilience') || q.includes('retry')) {
-    return "Omkar uses Polly in .NET 8 for defense-in-depth against transient failures. He implements exponential backoff with decorrelated jitter for database lockups and third-party HTTP timeouts, combined with circuit breakers to prevent cascading downstream failures during bulk ETL batches.";
+  if (
+    q.includes('etl') ||
+    q.includes('koop') ||
+    q.includes('postgis') ||
+    q.includes('gist') ||
+    q.includes('polly') ||
+    q.includes('serverless') ||
+    q.includes('azure')
+  ) {
+    return 'Omkar built a serverless GIS ETL pipeline on Azure using Azure Container Apps Jobs with .NET 8 and Polly retries. It ingests external ArcGIS APIs into PostgreSQL/PostGIS with GiST spatial indexing, served via a custom Node.js and Koop.js FeatureServer that delivers sub-second (<120ms) spatial query lookups with 99.99% availability and 85% cost savings.';
   }
 
-  if (q.includes('stack') || q.includes('technolog') || q.includes('skills')) {
-    return "Omkar's core stack centers on C#, .NET 8, ASP.NET Core, TPL Dataflow, and Node.js/Koop.js for high-throughput distributed backends; PostgreSQL/PostGIS (GiST) and SQL Server for spatial & relational data; Microsoft Azure (ACA, ACA Jobs, Blob, Key Vault) for cloud infra; and Angular, TypeScript, ArcGIS SDK, and Cesium.js for GIS visualization.";
+  if (
+    q.includes('role') ||
+    q.includes('title') ||
+    q.includes('experience') ||
+    q.includes('tenure') ||
+    q.includes('company') ||
+    q.includes('neilsoft')
+  ) {
+    return 'Omkar Marwadi is a Senior Software Engineer at Neilsoft Ltd. in Pune, India (Jul 2026 – Present), with 3+ years of progressive engineering experience, having previously served as Junior Software Engineer and Graduate Engineer Trainee at Neilsoft.';
   }
 
-  if (q.includes('contact') || q.includes('hire') || q.includes('email') || q.includes('reach')) {
-    return "You can reach Omkar directly at omkar.marwadi11@gmail.com or by phone at +91 9075914867. He is based in Pune, India, and open to high-impact distributed systems and geospatial architecture leadership roles.";
+  if (
+    q.includes('contact') ||
+    q.includes('hire') ||
+    q.includes('email') ||
+    q.includes('linkedin') ||
+    q.includes('phone')
+  ) {
+    return 'You can reach Omkar Marwadi directly via email at omkar.marwadi11@gmail.com, by phone at +91 9075914867, or on LinkedIn at https://linkedin.com/in/omkarmarwadi. He is based in Pune, India.';
   }
 
-  return "Omkar Marwadi is a Senior Software Engineer specializing in distributed backend systems, high-throughput data pipelines, and geospatial cloud platforms. Ask about his 2M parcel TPL Dataflow pipeline, custom Koop.js PostGIS platform, or his work with Azure Container Apps!";
+  return 'Omkar Marwadi is a Senior Software Engineer at Neilsoft Ltd. specializing in high-throughput backend data pipelines (.NET 8, TPL Dataflow), PostGIS GiST spatial indexing, and browser-based 2D/3D geometry tools. Direct hiring inquiries to omkar.marwadi11@gmail.com or linkedin.com/in/omkarmarwadi.';
 }

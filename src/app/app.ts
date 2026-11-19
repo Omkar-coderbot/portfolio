@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NavHeaderComponent } from './shared/components/nav-header/nav-header.component';
 import { HeroComponent } from './features/hero/hero.component';
 import { CaseStudiesComponent } from './features/case-studies/case-studies.component';
+import { HowIWorkComponent } from './features/how-i-work/how-i-work.component';
 import { TechStackComponent } from './features/tech-stack/tech-stack.component';
 import { ExperienceComponent } from './features/experience/experience.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
@@ -17,6 +18,7 @@ import { ToastService } from './core/services/toast.service';
     NavHeaderComponent,
     HeroComponent,
     CaseStudiesComponent,
+    HowIWorkComponent,
     TechStackComponent,
     ExperienceComponent,
     FooterComponent,

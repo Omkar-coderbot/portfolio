@@ -20,7 +20,7 @@ Your goal is to answer questions from hiring managers, engineering leaders, and 
 - Tone: Crisp, engineering-driven, grounded, respectful, zero fluff. Use technical terminology accurately (e.g., TPL Dataflow, GiST index, backpressure, immutable records, Polly retry with jitter, bounded capacity).
 
 ### CORE PRODUCTION CASE STUDIES
-1. High-Volume Parcel Synchronization & Multi-Factor Scoring Engine (.NET 8 + TPL Dataflow)
+1. High-Volume Parcel Synchronization & Multi-Factor Scoring Engine (.NET + TPL Dataflow)
    - Scale: 2M+ LA County land parcels evaluated across 25+ spatial, zoning, and valuation rules.
    - The Bottleneck: Legacy sync was sequential and API-driven, taking ~7 days, with massive memory bloat and thread/context mixing.
    - Hard Decision: Avoided external distributed brokers (Kafka/RabbitMQ) for single-node workloads to eliminate serialization overhead and cluster maintenance. Used .NET Task Parallel Library (TPL Dataflow) actor-style bounded pipeline.
@@ -28,9 +28,9 @@ Your goal is to answer questions from hiring managers, engineering leaders, and 
    - The Fix: BoundedCapacity = 500 on BufferBlock, immutable per-parcel records, MaxDegreeOfParallelism matched to DB pool, chunked PostgreSQL COPY bulk upserts (1,000 records/tx), and Polly exponential jitter retry.
    - Result: Cut runtime from ~1 week down to 3.8 hours with 1.2 GB flat RAM ceiling and zero data corruption.
 
-2. External Parameter ETL & Custom ArcGIS Feature Service Platform (.NET 8 + PostGIS + Koop.js)
+2. External Parameter ETL & Custom ArcGIS Feature Service Platform (.NET + PostGIS + Koop.js)
    - Bottleneck: Commercial ArcGIS FeatureServers charged per-query costs, rate-limited batch runs, and caused 15s+ response times.
-   - Architecture: Scheduled .NET 8 ETL worker deployed on Azure Container Apps Jobs, checkpointed staging in Azure Blob Storage, Azure Key Vault for credentials, PostgreSQL/PostGIS (Azure Flexible Server), and custom Node.js/Koop.js server.
+   - Architecture: Scheduled .NET ETL worker deployed on Azure Container Apps Jobs, checkpointed staging in Azure Blob Storage, Azure Key Vault for credentials, PostgreSQL/PostGIS (Azure Flexible Server), and custom Node.js/Koop.js server.
    - What Broke First: Multi-polygon spatial intersects (\`ST_Intersects\`) pegged Postgres CPU at 100%.
    - The Fix: GiST (Generalized Search Tree) spatial indexing, pre-simplified geometries (\`ST_SimplifyPreserveTopology\`), FIPS code partitioning, and Polly retry recovery.
    - Result: Sub-second queries (<120ms), 99.99% availability, 85% monthly cost savings, zero vendor rate-limit throttling.
@@ -40,7 +40,7 @@ Your goal is to answer questions from hiring managers, engineering leaders, and 
    - Architecture: Konva.js (HTML5 Canvas) for 2D setback calculation, Cesium.js (WebGL) for 3D massing extrusion, Web Workers for polygon geometry buffering, and OpenAI API with strict JSON schema enforcement for municipal zoning parsing.
 
 ### WORK HISTORY (DO NOT USE THE WORD "MICROSERVICES")
-- Sr. Software Engineer | Neilsoft Ltd., Pune (Jul 2026 – Present): Cloud-native backend architect, .NET 8, ACA Jobs, PostGIS, primary technical POC for enterprise clients, team mentor, Claude-assisted velocity.
+- Sr. Software Engineer | Neilsoft Ltd., Pune (Jul 2026 – Present): Cloud-native backend architect, .NET, ACA Jobs, PostGIS, primary technical POC for enterprise clients, team mentor, Claude-assisted velocity.
 - Jr. Software Engineer | Neilsoft Ltd., Pune (Dec 2024 – Jun 2026): .NET TPL Dataflow pipelines, Koop.js Feature Servers, 2D/3D GIS tools, OAuth 2.0 / OIDC.
 - Graduate Engineer Trainee | Neilsoft Ltd., Pune (Dec 2023 – Dec 2024): .NET, SQL Server optimization, automated testing.
 - Software Developer Intern | Imagine Multiservices Pvt. Ltd. (2022 – 2023): REST APIs, web apps, relational DBs.
@@ -151,7 +151,7 @@ function generateFallbackResponse(query: string): string {
   const q = query.toLowerCase();
 
   if (q.includes('2m') || q.includes('parcel') || q.includes('tpl') || q.includes('pipeline') || q.includes('dataflow')) {
-    return "Omkar re-architected the 2M+ LA County parcel sync pipeline using .NET 8 TPL Dataflow. The legacy system took ~1 week with frequent memory bloat and socket exhaustion. By creating bounded BufferBlocks (capacity 500), immutable per-parcel records, and matching MaxDegreeOfParallelism to the PostgreSQL connection pool with chunked COPY operations, he reduced execution time to 3.8 hours with a flat 1.2 GB RAM ceiling.";
+    return "Omkar re-architected the 2M+ LA County parcel sync pipeline using .NET TPL Dataflow. The legacy system took ~1 week with frequent memory bloat and socket exhaustion. By creating bounded BufferBlocks (capacity 500), immutable per-parcel records, and matching MaxDegreeOfParallelism to the PostgreSQL connection pool with chunked COPY operations, he reduced execution time to 3.8 hours with a flat 1.2 GB RAM ceiling.";
   }
 
   if (q.includes('koop') || q.includes('arcgis') || q.includes('spatial') || q.includes('gist') || q.includes('postgis')) {
@@ -159,11 +159,11 @@ function generateFallbackResponse(query: string): string {
   }
 
   if (q.includes('polly') || q.includes('resilience') || q.includes('retry')) {
-    return "Omkar uses Polly in .NET 8 for defense-in-depth against transient failures. He implements exponential backoff with decorrelated jitter for database lockups and third-party HTTP timeouts, combined with circuit breakers to prevent cascading downstream failures during bulk ETL batches.";
+    return "Omkar uses Polly in .NET for defense-in-depth against transient failures. He implements exponential backoff with decorrelated jitter for database lockups and third-party HTTP timeouts, combined with circuit breakers to prevent cascading downstream failures during bulk ETL batches.";
   }
 
   if (q.includes('stack') || q.includes('technolog') || q.includes('skills')) {
-    return "Omkar's core stack centers on C#, .NET 8, ASP.NET Core, TPL Dataflow, and Node.js/Koop.js for high-throughput distributed backends; PostgreSQL/PostGIS (GiST) and SQL Server for spatial & relational data; Microsoft Azure (ACA, ACA Jobs, Blob, Key Vault) for cloud infra; and Angular, TypeScript, ArcGIS SDK, and Cesium.js for GIS visualization.";
+    return "Omkar's core stack centers on C#, .NET, ASP.NET Core, TPL Dataflow, and Node.js/Koop.js for high-throughput distributed backends; PostgreSQL/PostGIS (GiST) and SQL Server for spatial & relational data; Microsoft Azure (ACA, ACA Jobs, Blob, Key Vault) for cloud infra; and Angular, TypeScript, ArcGIS SDK, and Cesium.js for GIS visualization.";
   }
 
   if (q.includes('contact') || q.includes('hire') || q.includes('email') || q.includes('reach')) {

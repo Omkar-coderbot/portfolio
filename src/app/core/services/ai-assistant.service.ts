@@ -29,7 +29,7 @@ export class AiAssistantService {
       id: 'welcome',
       role: 'assistant',
       content:
-        "Hello! I am Omkar's Portfolio AI Assistant, running directly on Cloudflare Workers AI with Llama 3.1 8B. Ask me about Omkar's 2M+ parcel TPL Dataflow pipeline, PostGIS GiST spatial indexing, the 2D/3D Spatial Massing tool, or his engineering experience at Neilsoft Ltd.",
+        "Hello! I am Omkar's Portfolio AI Assistant. Ask me about Omkar's 2M+ parcel TPL Dataflow pipeline, PostGIS GiST spatial indexing, the 2D/3D Spatial Massing tool, or his engineering experience at Neilsoft Ltd.",
       timestamp: new Date(),
     },
   ]);
@@ -167,7 +167,7 @@ export class AiAssistantService {
       q.includes('dataflow') ||
       q.includes('13x')
     ) {
-      return 'For the Geospatial Real Estate & Parcel Platform, Omkar architected an in-process bounded pipeline using .NET 8 TPL Dataflow. It evaluated 2M+ LA County parcels with automated financial reporting and OpenAI-assisted summaries. By pairing bounded BufferBlocks, concurrent TransformBlocks, and chunked PostgreSQL COPY ActionBlocks, the team achieved 13x faster ingestion and reduced parcel selection latency from hours to under 2 minutes.';
+      return 'For the Geospatial Real Estate & Parcel Platform, Omkar architected an in-process bounded pipeline using .NET TPL Dataflow. It evaluated 2M+ LA County parcels with automated financial reporting and OpenAI-assisted summaries. By pairing bounded BufferBlocks, concurrent TransformBlocks, and chunked PostgreSQL COPY ActionBlocks, the team achieved 13x faster ingestion and reduced parcel selection latency from hours to under 2 minutes.';
     }
     if (
       q.includes('massing') ||
@@ -187,7 +187,7 @@ export class AiAssistantService {
       q.includes('polly') ||
       q.includes('serverless')
     ) {
-      return 'Omkar designed a serverless GIS ETL pipeline on Azure using Azure Container Apps Jobs with .NET 8 and Polly retries. It ingests external ArcGIS APIs into PostgreSQL/PostGIS with GiST spatial indexing, served via a custom Node.js and Koop.js FeatureServer that delivers sub-second (<120ms) spatial lookups with 99.99% availability.';
+      return 'Omkar designed a serverless GIS ETL pipeline on Azure using Azure Container Apps Jobs with .NET and Polly retries. It ingests external ArcGIS APIs into PostgreSQL/PostGIS with GiST spatial indexing, served via a custom Node.js and Koop.js FeatureServer that delivers sub-second (<120ms) spatial lookups with 99.99% availability.';
     }
     if (
       q.includes('how i work') ||
@@ -206,6 +206,6 @@ export class AiAssistantService {
     ) {
       return `You can contact Omkar Marwadi directly at ${PROFILE_DATA.email} or by phone at ${PROFILE_DATA.phone}. He is based in Pune, India. You can also download his resume directly via the 'Download Resume' action on this page.`;
     }
-    return 'Omkar Marwadi is a Senior Software Engineer at Neilsoft Ltd. (Pune, India) with 3+ years of full-stack and geospatial software engineering experience across C#, .NET 8, ASP.NET Core, Angular 17, PostGIS, Azure Container Apps, and browser 2D/3D geometry tools. Feel free to ask about any of his production case studies or architecture patterns!';
+    return 'Omkar Marwadi is a Senior Software Engineer at Neilsoft Ltd. (Pune, India) with 3+ years of full-stack and geospatial software engineering experience across C#, .NET, ASP.NET Core, Angular, PostGIS, Azure Container Apps, and browser 2D/3D geometry tools. Feel free to ask about any of his production case studies or architecture patterns!';
   }
 }

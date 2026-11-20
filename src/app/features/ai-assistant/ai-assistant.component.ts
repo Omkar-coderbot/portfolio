@@ -160,7 +160,7 @@ import { PROFILE_DATA } from '../../core/data/portfolio-data';
                     rows="2"
                     maxlength="300"
                     [disabled]="aiService.isLoading()"
-                    placeholder="Ask about .NET 8 TPL Dataflow, PostGIS GiST, or Cesium.js..."
+                    placeholder="Ask about .NET TPL Dataflow, PostGIS GiST, or Cesium.js..."
                     class="w-full px-3 py-2 pr-16 text-xs font-mono rounded-xs border border-[#E8E5DF] dark:border-[#1C2436] bg-white dark:bg-[#0E1320] text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 dark:focus:border-sky-400 disabled:opacity-50 resize-none"></textarea>
 
                   <!-- Real-time 300-Character Counter Badge -->

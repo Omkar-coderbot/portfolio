@@ -3,7 +3,6 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* =========================================================================
-   TYPOGRAPHY CONFIGURATION (TAILWIND V4 @theme)
    Major Headings: Condensed bold display font style (Barlow Condensed / Oswald)
    Body: Clean modern neutral sans-serif (Inter)
    Technical / Code: JetBrains Mono

@@ -22,7 +22,7 @@ export const PROFILE_DATA: ProfileData = {
   tenure: 'Jul 2026 – Present',
   totalExperience: '3+ Years',
   summary:
-    'Senior Software Engineer at Neilsoft Ltd. with 3+ years of software engineering experience. Focused on high-throughput backend data pipelines (.NET 8, TPL Dataflow), PostGIS GiST spatial indexing, serverless Azure pipelines (including Azure Container Apps and ACA Jobs), and browser-based 2D/3D layout tools.',
+    'Senior Software Engineer at Neilsoft Ltd. with 3+ years of software engineering experience. Focused on high-throughput backend data pipelines (.NET, TPL Dataflow), PostGIS GiST spatial indexing, serverless Azure pipelines (including Azure Container Apps and ACA Jobs), and browser-based 2D/3D layout tools.',
   email: 'omkar.marwadi11@gmail.com', // Contact placeholder
   phone: '+91 9075914867', // Phone placeholder
   resumeUrl: '/assets/Omkar_Marwadi_Resume.pdf', // PDF download placeholder
@@ -30,21 +30,11 @@ export const PROFILE_DATA: ProfileData = {
   linkedin: 'https://linkedin.com/in/omkarmarwadi', // LinkedIn profile placeholder
   coreStack: [
     'C#',
-    '.NET 8',
+    '.NET',
     'ASP.NET Core',
-    'Angular 17',
+    'Angular',
     'TypeScript',
-    'MS SQL Server',
-    'PostgreSQL',
-    'PostGIS',
-    'Azure Container Apps',
-    'Azure Container Apps Jobs',
-    'Azure Blob Storage',
-    'Azure Key Vault',
-    'Docker',
-    'Git',
-    'Claude',
-    'OpenAI API',
+    'PostgreSQL / PostGIS'
   ],
   telemetryHighlights: [
     {
@@ -83,13 +73,13 @@ export const CASE_STUDIES: CaseStudy[] = [
     title: 'Geospatial Real Estate & Parcel Platform',
     subtitle: 'High-Throughput Land Parcel Valuation & Synchronization Engine',
     description:
-      'Web application for working with 2M+ LA County parcels, including automated financial reporting, OpenAI-assisted site summaries, and Google/Microsoft SSO with role-based access control. Built a multi-threaded TPL Dataflow sync engine that improved ingestion speed by 13x and reduced parcel selection time to under 2 minutes.',
+      'Web application for working with 2M+ LA County parcels, including automated financial reporting, OpenAI-assisted site summaries, and Google/Microsoft SSO along with role-based access control. Built a multi-threaded TPL Dataflow sync engine that improved ingestion speed by 13x and reduced parcel selection time to under 2 minutes.',
     scaleBadge: '2M+ LA County Parcels • 13x Speedup',
     tags: [
       'C#',
-      '.NET 8 Web API',
+      '.NET Web API',
       'TPL Dataflow',
-      'Angular 17',
+      'Angular',
       'TypeScript',
       'PostgreSQL',
       'PostGIS',
@@ -161,7 +151,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       items: [
         {
           label: 'Backend Pipeline',
-          value: 'C# / .NET 8 Web API & TPL Dataflow',
+          value: 'C# / .NET Web API & TPL Dataflow',
           detail: 'Bounded BufferBlocks and TransformBlocks preventing memory starvation under load.',
         },
         {
@@ -198,7 +188,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       'Concurrent TransformBlock handles CPU-intensive financial and zoning rule evaluations',
       'ActionBlock batches PostgreSQL bulk COPY operations into chunked 1,000-record transactions',
       'OpenAI API integration generates automated, structured site summaries from parcel zoning data',
-      'Angular 17 reactive client with Signals provides responsive search across 2M+ parcels',
+      'Angular reactive client with Signals provides responsive search across 2M+ parcels',
     ],
   },
   {
@@ -206,10 +196,10 @@ export const CASE_STUDIES: CaseStudy[] = [
     title: 'Spatial Massing & Floor-Plan Layout Tool',
     subtitle: 'Automated 2D/3D Feasibility & Zoning Layout Generator',
     description:
-      'Browser-based 2D and 3D layout tool generating spatial massing and floor plans from parcel boundaries and zoning rules, reducing initial building layout preparation from roughly 2 months to around 15 minutes. Combines ArcGIS JS API for parcel layers, Konva.js for interactive 2D drafting, and Cesium.js for volumetric 3D massing.',
+      'Browser-based 2D and 3D layout tool generating spatial massing and floor plans from parcel boundaries and zoning rules, reducing initial building layout preparation from roughly 2 months to around 15 minutes. Combines ArcGIS JS API for feature layers, Konva.js for interactive 2D drafting, and Cesium.js for volumetric 3D massing.',
     scaleBadge: '~2 Mos → ~15 Min Turnaround • 60 FPS',
     tags: [
-      'Angular 17',
+      'Angular',
       'ArcGIS SDK & JS API',
       'Cesium.js',
       'Konva.js',
@@ -275,7 +265,7 @@ export const CASE_STUDIES: CaseStudy[] = [
         {
           label: '2D Setback Math',
           value: 'Real-Time Canvas Updates',
-          detail: 'Interactive dragging of setback buffers, building footprints, and floor plans.',
+          detail: 'Interactive dragging, zooming, rotation of floor plans with detailed layout of modular units, swapping of units with different geometries (1BD, 2BD, 3BD).',
         },
         {
           label: 'Zoning Compliance',
@@ -305,7 +295,7 @@ export const CASE_STUDIES: CaseStudy[] = [
         },
         {
           label: 'Frontend State',
-          value: 'Angular 17 Signals & Web Workers',
+          value: 'Angular Signals & Web Workers',
           detail: 'Non-blocking geometry computations offloaded to background Web Workers.',
         },
       ],
@@ -313,7 +303,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     problem:
       'Urban planners and real estate development teams spent up to 2 months manually cross-referencing zoning bylaws, drawing setback buffers in desktop CAD software, and extruding conceptual 3D massing for initial site feasibility evaluations.',
     hardDecision:
-      'Engineered an entirely browser-native computational geometry pipeline. Rather than round-tripping heavy CAD files to a server, we combined Konva.js for interactive 2D setback sketching with Cesium.js for volumetric 3D building extrusion, driven by reactive Angular 17 Signals state.',
+      'Engineered an entirely browser-native computational geometry pipeline. Rather than round-tripping heavy CAD files to a server, we combined Konva.js for interactive 2D setback sketching with Cesium.js for volumetric 3D building extrusion, driven by reactive Angular Signals state.',
     whatBrokeFirstAndFix: {
       broke:
         'Complex non-convex and multi-ring parcel boundaries produced polygon self-intersections during inward setback buffering, freezing the main browser thread for 6 to 8 seconds.',
@@ -327,7 +317,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       'Volumetric 3D massing extrusion using Cesium.js glTF primitives with sun-angle shadow analysis',
       'ArcGIS JavaScript SDK basemap integration for real-time parcel boundary streaming',
       'Web Workers offload polygon decomposition and setback math from UI render cycles',
-      'Angular 17 standalone architecture with Signals providing sub-millisecond reactive UI sync',
+      'Angular standalone architecture with Signals providing sub-millisecond reactive UI sync',
     ],
   },
   {
@@ -335,11 +325,11 @@ export const CASE_STUDIES: CaseStudy[] = [
     title: 'Serverless GIS ETL & Spatial Feature Service',
     subtitle: 'High-Performance Spatial Data Ingestion & Custom FeatureServer',
     description:
-      'Serverless pipeline on Azure using Azure services (including Azure Container Apps Jobs) with .NET 8 and Polly retry policies to ingest ArcGIS APIs into PostGIS, served through Node.js and Koop.js with GiST spatial indexing for sub-second spatial queries.',
+      'Serverless pipeline on Azure using Azure services (including Azure Container Apps Jobs) with .NET and Polly retry policies to ingest ArcGIS APIs into PostGIS, served through Node.js and Koop.js with GiST spatial indexing for sub-second spatial queries.',
     scaleBadge: 'Sub-Second (<120ms) Spatial Lookups • 99.99% Uptime',
     tags: [
       'Azure Container Apps Jobs',
-      '.NET 8',
+      '.NET',
       'Polly Resilience',
       'PostgreSQL',
       'PostGIS',
@@ -415,11 +405,11 @@ export const CASE_STUDIES: CaseStudy[] = [
         {
           label: 'Serverless ETL Workers',
           value: 'Azure Container Apps Jobs',
-          detail: 'Scheduled cron-triggered container executions running .NET 8 with automatic scale-to-zero.',
+          detail: 'Scheduled cron-triggered container executions running .NET with automatic scale-to-zero.',
         },
         {
           label: 'Resilience Library',
-          value: '.NET 8 & Polly Policies',
+          value: '.NET & Polly Policies',
           detail: 'Automated retry with jitter and circuit breaker policies protecting ingestion threads.',
         },
         {
@@ -437,7 +427,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     problem:
       'Internal GIS applications relied directly on commercial third-party ArcGIS FeatureServers. Upstream rate limiting, periodic 504 gateway timeouts during peak hours, and steep per-query metering bills restricted analytical query capacity and created external single points of failure.',
     hardDecision:
-      'Decoupled client applications completely from external vendor endpoints. Designed an autonomous, scheduled serverless ETL pipeline on Azure using Azure Container Apps Jobs and .NET 8 to ingest external ArcGIS endpoints, stage delta payloads in Azure Blob Storage, load PostGIS tables, and expose standard FeatureServer endpoints via an in-house Node.js and Koop.js GeoServices provider.',
+      'Decoupled client applications completely from external vendor endpoints. Designed an autonomous, scheduled serverless ETL pipeline on Azure using Azure Container Apps Jobs and .NET to ingest external ArcGIS endpoints, stage delta payloads in Azure Blob Storage, load PostGIS tables, and expose standard FeatureServer endpoints via an in-house Node.js and Koop.js GeoServices provider.',
     whatBrokeFirstAndFix: {
       broke:
         'Complex nationwide spatial intersections (ST_Intersects) across multi-polygon environmental boundary layers caused PostgreSQL CPU to max at 100%, timing out client queries after 30 seconds.',
@@ -448,7 +438,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     },
     architectureHighlights: [
       'Azure Container Apps Jobs execute on scheduled cron triggers to pull spatial deltas',
-      '.NET 8 worker uses Polly for decorrelated exponential retry against vendor rate limits',
+      '.NET worker uses Polly for decorrelated exponential retry against vendor rate limits',
       'Azure Key Vault securely manages API keys, connection strings, and rotation policies',
       'Azure Blob Storage stages intermediate GeoJSON datasets for idempotent replay',
       'PostgreSQL with PostGIS extension provides GiST-indexed spatial operators (ST_Contains, ST_Intersects)',
@@ -489,7 +479,7 @@ export const HOW_I_WORK: HowIWorkPillar[] = [
     keyPractices: [
       'Conducting thorough, actionable code reviews emphasizing maintainability and type safety',
       'Hands-on debugging guidance across complex asynchronous logic and concurrency issues',
-      'Establishing clean backend structure and modular patterns in .NET 8 and Angular 17',
+      'Establishing clean backend structure and modular patterns in .NET and Angular',
       'Guiding developers on SQL query tuning, execution plans, and spatial indexing techniques',
     ],
     icon: 'mentor',
@@ -523,7 +513,7 @@ export const TECH_CATEGORIES: TechCategory[] = [
     subtitle: 'High-throughput pipelines, async streaming, and resilient APIs.',
     skills: [
       {
-        name: 'C# / .NET 8',
+        name: 'C# / .NET',
         description: 'High-throughput async backends, memory-efficient streaming, and modern runtime features',
         highlight: true,
       },
@@ -535,7 +525,6 @@ export const TECH_CATEGORIES: TechCategory[] = [
       {
         name: '.NET TPL Dataflow',
         description: 'In-process bounded actor-model pipelines with explicit backpressure control',
-        highlight: true,
       },
       {
         name: 'Polly Resilience Policies',
@@ -547,7 +536,7 @@ export const TECH_CATEGORIES: TechCategory[] = [
       },
       {
         name: 'OAuth 2.0 / SSO & RBAC',
-        description: 'Google & Microsoft SSO with claims-based authentication and role-based access control',
+        description: 'Google & Microsoft SSO and role-based access control',
       },
     ],
   },
@@ -557,25 +546,24 @@ export const TECH_CATEGORIES: TechCategory[] = [
     subtitle: 'Geospatial indexing, spatial algorithms, and query performance tuning.',
     skills: [
       {
-        name: 'PostgreSQL & PostGIS',
-        description: 'GiST spatial indexing, ST_Intersects, ST_Contains, boundary analytics, and topology',
+        name: 'PostgreSQL',
+        description: 'Relational data modeling, indexing, query tuning, and transactional integrity',
         highlight: true,
       },
       {
-        name: 'MS SQL Server',
-        description: 'Query tuning, execution plan analysis, stored procedure optimization, and indexing',
-        highlight: true,
+        name: 'PostGIS',
+        description: 'Spatial data types, geometry/geography queries, boundary checks, and spatial indexing',
+      },
+      {
+        name: 'Partitioning & Query Performance',
+        description: 'Table partitioning (such as by region or county), execution plan tuning, and high-throughput batch writes',
       },
       {
         name: 'GiST Spatial Indexing',
         description: 'Generalized Search Tree index optimization on multi-polygon boundary tables',
       },
       {
-        name: 'Spatial Optimization',
-        description: 'R-Tree tuning, vertex simplification (ST_SimplifyPreserveTopology), and county partitioning',
-      },
-      {
-        name: 'MySQL',
+        name: 'MS SQL',
         description: 'Relational data modeling, schema normalization, and transactional integrity',
       },
     ],
@@ -594,6 +582,20 @@ export const TECH_CATEGORIES: TechCategory[] = [
         name: 'ACA Scheduled Jobs',
         description: 'Cron-triggered, event-driven batch ETL pipelines with automatic scale-to-zero',
         highlight: true,
+      },
+      {
+        name: 'Bitbucket',
+        description: 'Pull request reviews, branch policies, and commit traceability linked to work items',
+        highlight: true,
+      },
+      {
+        name: 'Jira',
+        description: 'Sprint planning, task breakdown, delivery tracking, and requirement alignment',
+        highlight: true,
+      },
+      {
+        name: 'Confluence',
+        description: 'Incident reports, Technical specifications, architecture notes, runbooks, and team knowledge sharing',
       },
       {
         name: 'Azure Blob Storage',
@@ -619,7 +621,7 @@ export const TECH_CATEGORIES: TechCategory[] = [
     subtitle: 'Reactive client architectures, 2D/3D geometry rendering, and applied LLM workflows.',
     skills: [
       {
-        name: 'Angular 17 (Standalone + Signals)',
+        name: 'Angular (Standalone + Signals)',
         description: 'Fine-grained reactive state, @for/@if control flow, and standalone component architecture',
         highlight: true,
       },
@@ -641,7 +643,7 @@ export const TECH_CATEGORIES: TechCategory[] = [
         description: 'Interactive 2D spatial layouts, sweep-line setbacks, and hardware-accelerated canvas',
       },
       {
-        name: 'Tailwind CSS',
+        name: 'CSS3',
         description: 'Clean design token architecture, crisp borders, and technical UI aesthetics',
       },
       {
@@ -673,7 +675,7 @@ export const EXPERIENCE_TIMELINE: ExperienceItem[] = [
     description:
       'Senior full-stack and geospatial software engineer leading high-throughput data processing platforms, Azure serverless pipelines, and client technical discussions.',
     achievements: [
-      'Architected serverless spatial data pipelines using .NET 8, Azure Container Apps, and Azure Container Apps Jobs with Polly retry policies.',
+      'Architected serverless spatial data pipelines using .NET, Azure Container Apps, and Azure Container Apps Jobs with Polly retry policies.',
       'Designed PostgreSQL/PostGIS databases with GiST spatial indexing, achieving sub-second (<120ms) spatial query execution.',
       'Served as primary client technical point of contact, driving requirements discussions, trade-offs, and steady feature delivery.',
       'Mentored junior developers through structured code reviews, concurrency debugging, backend structure, and SQL optimization.',
@@ -681,9 +683,9 @@ export const EXPERIENCE_TIMELINE: ExperienceItem[] = [
     ],
     technologies: [
       'C#',
-      '.NET 8',
+      '.NET',
       'ASP.NET Core',
-      'Angular 17',
+      'Angular',
       'PostgreSQL',
       'PostGIS',
       'Azure Container Apps',
@@ -692,6 +694,7 @@ export const EXPERIENCE_TIMELINE: ExperienceItem[] = [
       'Azure Key Vault',
       'Docker',
       'Claude',
+      'CI/CD'
     ],
   },
   {
@@ -705,14 +708,14 @@ export const EXPERIENCE_TIMELINE: ExperienceItem[] = [
     achievements: [
       'Engineered multi-threaded .NET TPL Dataflow sync engine evaluating 2M+ LA County parcels, cutting ingestion time 13x and parcel selection to <2 minutes.',
       'Built custom Node.js and Koop.js GeoServices REST providers replacing rate-limited vendor ArcGIS endpoints with sub-second queries.',
-      'Developed browser-based 2D/3D layout tool using Angular 17, ArcGIS JS API, Cesium.js, and Konva.js, reducing layout prep from ~2 months to ~15 minutes.',
+      'Developed browser-based 2D/3D layout tool using Angular, ArcGIS JS API, Cesium.js, and Konva.js, reducing layout prep from ~2 months to ~15 minutes.',
       'Implemented Google and Microsoft SSO with enterprise role-based access control (RBAC).',
     ],
     technologies: [
       'C#',
       'ASP.NET Core',
       'TPL Dataflow',
-      'Angular 17',
+      'Angular',
       'TypeScript',
       'ArcGIS SDK',
       'Cesium.js',
@@ -728,10 +731,9 @@ export const EXPERIENCE_TIMELINE: ExperienceItem[] = [
     location: 'Pune, India',
     period: 'Dec 2023 – Dec 2024',
     description:
-      'Engineering residency focused on enterprise .NET backend development, spatial database optimization, and Angular component systems.',
+      'Engineering residency focused on enterprise .NET backend development and frontend Angular with ArcGIS mapping features, spatial database optimization, and Angular component systems.',
     achievements: [
       'Developed automated backend data validation pipelines and test suites with 85%+ coverage on core services.',
-      'Optimized MS SQL Server stored procedures and query execution plans, reducing report generation times by over 80%.',
       'Built reusable Angular UI components following standalone component conventions and accessible design patterns.',
     ],
     technologies: [
@@ -740,8 +742,7 @@ export const EXPERIENCE_TIMELINE: ExperienceItem[] = [
       'MS SQL Server',
       'TypeScript',
       'Angular',
-      'Git',
-      'CI/CD',
+      'Git'
     ],
   },
 ];
@@ -774,5 +775,5 @@ export const AI_SUGGESTED_PROMPTS = [
   'How does the Spatial Massing Tool reduce prep from ~2 months to ~15 minutes?',
   'Why did you use Azure Container Apps Jobs with Polly retries for the GIS ETL?',
   'Walk me through your experience as a Client Technical Point of Contact.',
-  'What are your primary backend engineering patterns in .NET 8?',
+  'What are your primary backend engineering patterns in .NET?',
 ];

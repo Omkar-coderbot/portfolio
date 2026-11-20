@@ -65,9 +65,6 @@ import { ToastService } from '../../../core/services/toast.service';
 
         <!-- Bottom Notice -->
         <div class="mt-8 pt-6 border-t border-[#E8E5DF] dark:border-[#1C2436] flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-stone-400 dark:text-slate-500 font-mono">
-          <div>
-            Built with Angular 17 (Standalone Components, Signals, &#64;for/&#64;if) &amp; Tailwind CSS.
-          </div>
           <div class="text-stone-500 dark:text-slate-400 uppercase tracking-wider">
             Pune, India • Neilsoft Ltd.
           </div>

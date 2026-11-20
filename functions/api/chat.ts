@@ -36,26 +36,26 @@ Your role is to answer questions from engineering leaders, hiring managers, and 
 - Contacts: Email: omkar.marwadi11@gmail.com | LinkedIn: https://linkedin.com/in/omkarmarwadi
 
 ### CORE TECHNOLOGIES
-- Languages & Backends: C#, .NET 8, ASP.NET Core Web API, Node.js, TypeScript
+- Languages & Backends: C#, .NET, ASP.NET Core Web API, Node.js, TypeScript
 - Data Pipelines & Resilience: .NET TPL Dataflow (in-process bounded pipelines with backpressure), Polly (retry with decorrelated exponential jitter, circuit breakers)
-- Geospatial & Databases: PostgreSQL, PostGIS (GiST spatial indexing, ST_Intersects, ST_Contains), MS SQL Server (stored procedure & execution plan tuning), Koop.js (custom GeoServices REST server)
+- Geospatial & Databases: PostgreSQL, PostGIS (GiST spatial indexing, ST_Intersects, ST_Contains), Koop.js (custom GeoServices REST server)
 - Cloud & Infrastructure: Azure Container Apps (ACA), Azure Container Apps Jobs (scheduled cron-triggered batch workers), Azure Blob Storage, Azure Key Vault, Docker, Git
-- Frontend & 3D/2D GIS: Angular 17 (standalone components, Signals, @for/@if control flow), ArcGIS SDK & JS API, Cesium.js (3D WebGL building massing), Konva.js (2D HTML5 canvas drafting), Tailwind CSS
+- Frontend & 3D/2D GIS: Angular (standalone components, Signals, @for/@if control flow), ArcGIS SDK & JS API, Cesium.js (3D WebGL building massing), Konva.js (2D HTML5 canvas drafting), CSS
 - Applied AI Tools: Claude, OpenAI API (structured municipal zoning bylaw parsing)
 
 ### THREE PRODUCTION CASE STUDIES
-1. Geospatial Real Estate & Parcel Platform (.NET 8 Web API, TPL Dataflow, PostgreSQL, PostGIS, Angular 17, OpenAI API, SSO):
+1. Geospatial Real Estate & Parcel Platform (.NET Web API, TPL Dataflow, PostgreSQL, PostGIS, Angular, OpenAI API, SSO):
    - Evaluated 2M+ Los Angeles County land parcels with 25+ zoning and valuation factors.
    - Built a multi-threaded in-process TPL Dataflow sync engine with bounded capacity (500) and chunked COPY commits (1,000 records).
    - Achieved 13x faster ingestion speed, cutting parcel selection latency from hours to under 2 minutes with a flat 1.2 GB RAM ceiling.
    - Integrated Google/Microsoft SSO with RBAC and OpenAI API for automated municipal parcel summaries.
 
-2. Spatial Massing & Floor-Plan Layout Tool (Angular 17, ArcGIS JS API, Cesium.js, Konva.js, TypeScript):
+2. Spatial Massing & Floor-Plan Layout Tool (Angular, ArcGIS JS API, Cesium.js, Konva.js, TypeScript):
    - Browser-based 2D and 3D layout tool generating building massing envelopes and floor plans from parcel boundaries and municipal zoning rules.
    - Reduced initial building layout preparation time from ~2 months to roughly 15 minutes.
    - Uses Konva.js for interactive 2D setback buffering and Cesium.js for volumetric 3D massing extrusion at 60 FPS WebGL, offloading geometric sweep-line computations to Web Workers.
 
-3. Serverless GIS ETL & Spatial Feature Service (Azure Container Apps Jobs, .NET 8, Polly, PostGIS, Node.js, Koop.js, Azure Blob & Key Vault):
+3. Serverless GIS ETL & Spatial Feature Service (Azure Container Apps Jobs, .NET, Polly, PostGIS, Node.js, Koop.js, Azure Blob & Key Vault):
    - Serverless pipeline on Azure ingesting external commercial ArcGIS REST APIs into PostGIS.
    - Managed via scheduled Azure Container Apps Jobs with Polly retry policies (exponential jitter) to handle transient rate limits.
    - Served through an in-house Node.js and Koop.js GeoServices provider with PostGIS GiST spatial indexing, delivering sub-second (<120ms) spatial query lookups with 99.99% availability and 85% monthly cost savings.
@@ -247,7 +247,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
 
       const reply =
         aiResult?.response?.trim() ||
-        "I am ready to share details on Omkar's experience, .NET 8 pipelines, or geospatial architecture.";
+        "I am ready to share details on Omkar's experience, .NET pipelines, or geospatial architecture.";
 
       return new Response(JSON.stringify({ response: reply }), {
         status: 200,
@@ -296,7 +296,7 @@ function getLocalFallbackAnswer(query: string): string {
     q.includes('speed') ||
     q.includes('13x')
   ) {
-    return 'For the Geospatial Real Estate Platform, Omkar architected a multi-threaded bounded pipeline using .NET 8 TPL Dataflow evaluating 2M+ LA County parcels. By pairing bounded BufferBlocks (capacity 500), concurrent TransformBlocks, and chunked bulk COPY ActionBlocks, the pipeline ran 13x faster and reduced parcel selection latency from hours to under 2 minutes with a flat 1.2 GB RAM ceiling.';
+    return 'For the Geospatial Real Estate Platform, Omkar architected a multi-threaded bounded pipeline using .NET TPL Dataflow evaluating 2M+ LA County parcels. By pairing bounded BufferBlocks (capacity 500), concurrent TransformBlocks, and chunked bulk COPY ActionBlocks, the pipeline ran 13x faster and reduced parcel selection latency from hours to under 2 minutes with a flat 1.2 GB RAM ceiling.';
   }
 
   if (
@@ -308,7 +308,7 @@ function getLocalFallbackAnswer(query: string): string {
     q.includes('3d') ||
     q.includes('2d')
   ) {
-    return 'The Spatial Massing & Floor-Plan Layout Tool is a browser-based 2D and 3D application that collapsed building layout preparation from roughly 2 months to ~15 minutes. It combines Konva.js for interactive 2D setback buffering and Cesium.js for volumetric 3D massing extrusions at 60 FPS WebGL, using Angular 17 Signals and Web Workers for polygon geometry buffering.';
+    return 'The Spatial Massing & Floor-Plan Layout Tool is a browser-based 2D and 3D application that collapsed building layout preparation from roughly 2 months to ~15 minutes. It combines Konva.js for interactive 2D setback buffering and Cesium.js for volumetric 3D massing extrusions at 60 FPS WebGL, using Angular Signals and Web Workers for polygon geometry buffering.';
   }
 
   if (
@@ -320,7 +320,7 @@ function getLocalFallbackAnswer(query: string): string {
     q.includes('serverless') ||
     q.includes('azure')
   ) {
-    return 'Omkar built a serverless GIS ETL pipeline on Azure using Azure Container Apps Jobs with .NET 8 and Polly retries. It ingests external ArcGIS APIs into PostgreSQL/PostGIS with GiST spatial indexing, served via a custom Node.js and Koop.js FeatureServer that delivers sub-second (<120ms) spatial query lookups with 99.99% availability and 85% cost savings.';
+    return 'Omkar built a serverless GIS ETL pipeline on Azure using Azure Container Apps Jobs with .NET and Polly retries. It ingests external ArcGIS APIs into PostgreSQL/PostGIS with GiST spatial indexing, served via a custom Node.js and Koop.js FeatureServer that delivers sub-second (<120ms) spatial query lookups with 99.99% availability and 85% cost savings.';
   }
 
   if (
@@ -344,5 +344,5 @@ function getLocalFallbackAnswer(query: string): string {
     return 'You can reach Omkar Marwadi directly via email at omkar.marwadi11@gmail.com, by phone at +91 9075914867, or on LinkedIn at https://linkedin.com/in/omkarmarwadi. He is based in Pune, India.';
   }
 
-  return 'Omkar Marwadi is a Senior Software Engineer at Neilsoft Ltd. specializing in high-throughput backend data pipelines (.NET 8, TPL Dataflow), PostGIS GiST spatial indexing, and browser-based 2D/3D geometry tools. Direct hiring inquiries to omkar.marwadi11@gmail.com or linkedin.com/in/omkarmarwadi.';
+  return 'Omkar Marwadi is a Senior Software Engineer at Neilsoft Ltd. specializing in high-throughput backend data pipelines (.NET, TPL Dataflow), PostGIS GiST spatial indexing, and browser-based 2D/3D geometry tools. Direct hiring inquiries to omkar.marwadi11@gmail.com or linkedin.com/in/omkarmarwadi.';
 }
